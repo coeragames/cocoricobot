@@ -1,2 +1,1 @@
-# cocoricobot
---Bot de CocoricoMC--
+<img scr="https://cocorico-mc.pr11.fr">
