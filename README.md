@@ -4,18 +4,18 @@
 <strong>Cocorico'Bot est le bot utilisé par CocoricoMC (https://cocorico-mc.pr11.fr) pour des commandes de modération, ainsi que des commandes utiles à la vie du serveur</strong><br><br>
 <i>version 0.1.2</i><br><br>
 <h2>Commandes à ce jour:</h2><br><br>
--commandes de modération (kick, ban, mute, tempmute)
--commande de clear
--commandes utiles à la vie du serveur
+-commandes de modération (kick, ban, mute, tempmute)<br>
+-commande de clear<br>
+-commandes utiles à la vie du serveur<br>
 -commandes du bot (ping,..)
 
 <br><br>
 
 <h2>Commandes futures</h2>
--commandes de modération enrichies (unban, temban, warn)
--commande giveaway
--message arrivée/départ
--système d'EXP
+-commandes de modération enrichies (unban, temban, warn)<br>
+-commande giveaway<br>
+-message arrivée/départ<br>
+-système d'EXP<br>
 ...
 <br><br>
 
