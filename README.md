@@ -29,6 +29,7 @@ En revanche, il est strictement interdit de faire une utilisation commericale du
 Rejoignez mon Discord Communautaire !
 Join my Discord !
 https://discord.gg/T247zrc
+<br><br>
 
 
 Hop ! Vous avez tout lu !<br>
