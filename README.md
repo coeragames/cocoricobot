@@ -7,13 +7,13 @@
 -commandes de modération (kick, ban, mute, tempmute)<br>
 -commande de clear<br>
 -commandes utiles à la vie du serveur<br>
--commandes du bot (ping,..)
+-commandes du bot (ping,..)<br>
+-commande giveaway
 
 <br><br>
 
 <h2>Commandes futures</h2>
 -commandes de modération enrichies (unban, temban, warn)<br>
--commande giveaway<br>
 -message arrivée/départ<br>
 -système d'EXP<br>
 ...
