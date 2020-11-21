@@ -3,6 +3,7 @@ const Client = new Discord.Client();
 const prefix = "/";
 const moment = require('moment');
 const fs = require("fs");
+const ms = require('ms')
 const bddbot = require("./bug-bot.json");
 const bddgame = require("./bug-game.json");
 const bddsugg = require("./sugg.json");
@@ -19,6 +20,53 @@ Client.on("ready", async () =>{
     Client.user.setActivity("Surveille CocoricoMC - /help")
 })
 
+//giveaway
+
+Client.on("message",  async message => {
+    let argsg = message.content.substring(prefix.length).split(" ")
+
+    if (message.content.startsWith(prefix + "giveaway")) {
+        let time = argsg[1]
+        if (!time) return message.channel.send("Vous n'avez pas spécifié la durée du giveaway");
+        
+        if (
+            !argsg[1].endsWith("d") &&
+            !argsg[1].endsWith("h") &&
+            !argsg[1].endsWith("m") &&
+            !argsg[1].endsWith("s") 
+
+        )
+        return message.channel.send("Temps mal spécifié")
+
+        let gchannel = message.mentions.channels.first();
+        if (!gchannel) return message.channel.send("Je ne peux pas trouver ce salon dans ce serveur")
+
+        let prize = argsg.slice(3).join("")
+        if (!prize) return message.channel.send("Prix du giveaway non spécifié")
+
+        message.delete()
+        gchannel.send(":tada: **NOUVEAU GIVEAWAY** :tada:")
+        let gembed = new Discord.MessageEmbed()
+            .setTitle("Nouveau Giveway !")
+            .setColor("RANDOM")
+            .setDescription(`Réagissez avec :tada: pour participer \nCrée par: **${message.author}**\nDurée: **${time}**\nPrix: **${prize}**`)
+            .setTimestamp(Date.now + ms(argsg[1]))
+            let m = await gchannel.send(gembed)
+            m.react("🎉")
+            setTimeout(() => {
+                if (m.reactions.cache.get("🎉").count <= 1) {
+                    return message.channel.send("Pas assez de participants")
+                }
+                let winner = m.reactions.cache.get("🎉").users.cache.filter((u) => !u.bot).random();
+                gchannel.send(`Bravo à ${winner}! Tu as gagné **${prize}**`
+                );
+             
+            
+        
+        }, ms(argsg[1]));
+    }
+})
+           
 //commandes non-mp
 Client.on("message", message => {
     if(message.channel.type == "dm") return;
@@ -121,6 +169,15 @@ Client.on("message", message => {
 
         }
 
+    }
+
+
+    if(message.content == prefix + "support"){
+        message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
+    }
+
+    if(message.content == prefix + "aide"){
+        message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
     }
 
     if(message.content == prefix + "bug"){
@@ -291,4 +348,4 @@ function Savebdd() {
 
 
 
-Client.login("TOKEN");
+Client.login("Nzc1NzU0OTc0Mzk4NTEzMTk1.X6q8Hg._I2EaPERyuX9OxbgBZ5vQUa2L9E");
