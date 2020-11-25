@@ -7,7 +7,7 @@ const ms = require('ms')
 const bddbot = require("./bug-bot.json");
 const bddgame = require("./bug-game.json");
 const bddsugg = require("./sugg.json");
-const bdd = require("./xp.json");
+const bddreports = require("./reports.json");
 
 
 Client.on("ready", () => {
@@ -70,7 +70,7 @@ Client.on("message",  async message => {
 //commandes non-mp
 Client.on("message", message => {
     if(message.channel.type == "dm") return;
-    if(message.author.bot) return;
+
 
     //ping pong easter egg
     if(message.content == "ping"){
@@ -107,7 +107,9 @@ Client.on("message", message => {
                 else {
                     message.channel.bulkDelete(number).then(messages => {
                         console.log("Suppression de " + messages.size + " messages réussie ! ");
-                        message.reply(messages.size + " message(s) a/ont été supprimées");
+                        message.reply(messages.size + " message(s) a/ont été supprimées").then(message => {
+                            message.delete({ timeout: 1000 })
+                        })
                     }).catch(err => {
                         console.log("Erreur lors du clear : " + err);
                         message.reply("Erreur lors du clear" + err);
@@ -171,6 +173,17 @@ Client.on("message", message => {
 
     }
 
+    if(message.content.startsWith("/report")){
+        if(message.content.length > 9){
+            message.channel.send("La **report** a été envoyé au STAFF !");
+            sugg = message.content.slice(9)
+            bddreports["reports"] = sugg
+            Savebddreports();
+
+        }
+
+    }
+
 
     if(message.content == prefix + "support"){
         message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
@@ -205,7 +218,7 @@ Client.on("message", message => {
     }
 
     if(message.content == prefix + "help-global"){
-        message.channel.send("**Help** \n \n /id - Donne votre ID Discord \n /ping-bot - Donne le Ping du Bot \n /discord - Donne le lien du Discord *uniquement en MP* \n /web - Donne le lien du site WEB \n /invite - Donne l'invitation officielle du Discord \n /jouer - Donne le lien de la page de téléchargement officielle du Launcher \n /version - Donne les informations sur le Bot \n /bug-game <bug> - Envoyez nous les bugs dans le jeu que vous avez repérés \n /bug-bot - Envoyez nous les bugs du bot que vous avez repérés \n \n https://cocorico-mc.pr11/.fr ");
+        message.channel.send("**Help** \n \n /id - Donne votre ID Discord \n /ping-bot - Donne le Ping du Bot \n /discord - Donne le lien du Discord *uniquement en MP* \n /web - Donne le lien du site WEB \n /invite - Donne l'invitation officielle du Discord \n /jouer - Donne le lien de la page de téléchargement officielle du Launcher \n /version - Donne les informations sur le Bot \n /bug-game <bug> - Envoyez nous les bugs dans le jeu que vous avez repérés \n /bug-bot <bug> - Envoyez nous les bugs du bot que vous avez repérés \n /report <ping ou id de la personne que vous report> <raison (introduire liens des messages,..)> - Report un joueur  \n \n https://cocorico-mc.pr11/.fr ");
      }
 
      if(message.content == prefix + "help-moderation"){
@@ -312,6 +325,45 @@ Client.on("message", message => {
         }
         });
 
+        Client.on("message", message => {
+            if(message.member.roles.cache.find(r => r.name === "reuuu")) {
+        
+        
+        
+                if(message.content.includes("https://")){
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("merde")){
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("putain")){
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("con")){
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("www")){
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+
+
+            }
+        
+        });
+
+
+        
+
 
 
 //connection bdd.json
@@ -336,8 +388,8 @@ function Savebddsugg() {
     });
 }
 
-function Savebdd() {
-    fs.writeFile("./xp.json", JSON.stringify(bdd, null, 4), (err) => {
+function Savebddreports() {
+    fs.writeFile("./reports.json", JSON.stringify(bddreports, null, 4), (err) => {
         if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
 
     });
@@ -348,4 +400,4 @@ function Savebdd() {
 
 
 
-Client.login("Nzc1NzU0OTc0Mzk4NTEzMTk1.X6q8Hg._I2EaPERyuX9OxbgBZ5vQUa2L9E");
+Client.login("Nzc1NzU0OTc0Mzk4NTEzMTk1.X6q8Hg.q7LYeAT_e8umfJbkT-d2_vRVEIg");
