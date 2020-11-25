@@ -8,7 +8,9 @@
 -commande de clear<br>
 -commandes utiles à la vie du serveur<br>
 -commandes du bot (ping,..)<br>
--commande giveaway
+-commande giveaway<br>
+-command report bug game/bot/player<br>
+-gros mots censurés
 
 <br><br>
 
