@@ -8,6 +8,7 @@ const bddbot = require("./bug-bot.json");
 const bddgame = require("./bug-game.json");
 const bddsugg = require("./sugg.json");
 const bddreports = require("./reports.json");
+const bddwarns = require("./warn.json");
 
 
 Client.on("ready", () => {
@@ -20,6 +21,38 @@ Client.on("ready", async () =>{
     Client.user.setActivity("Surveille CocoricoMC - /help")
 })
 
+Client.on("message",  async message => {
+
+    if(message.member.hasPermission("BAN_MEMBERS")){
+        if(message.member === null) return;
+        if(message.content.startsWith(prefix + "clear")){
+            let clearmsg = message.content.split(" ");
+            if(message.channel.type == "dm") return;       
+            if(clearmsg[1] == undefined){
+                message.reply("Nombre de messages à clear non ou mal défini");
+            }
+            else {
+                let number = parseInt(clearmsg[1]);
+
+                if(isNaN(number)){
+                    message.reply("Nombre de messages à clear non ou mal défini");
+                }
+                else {
+                    message.channel.bulkDelete(number).then(messages => {
+                        console.log("Suppression de " + messages.size + " messages réussie ! ");
+                        message.reply(messages.size + " message(s) a/ont été supprimées").then(message => {
+                            message.delete({ timeout: 1000 })
+                        })
+                    }).catch(err => {
+                        console.log("Erreur lors du clear : " + err);
+                        message.reply("Erreur lors du clear" + err);
+
+                    });
+                }
+            }
+        }
+    }
+});
 //giveaway
 
 Client.on("message",  async message => {
@@ -83,43 +116,11 @@ Client.on("message", message => {
 
     }
 
-
-
-
-
-
-
-    //clear
-
-    if(message.member.hasPermission("KICK_MEMBERS")){
-        if(message.content.startsWith(prefix + "clear")){
-            let clearmsg = message.content.split(" ");
-            if(message.channel.type == "dm") return;       
-            if(clearmsg[1] == undefined){
-                message.reply("Nombre de messages à clear non ou mal défini");
-            }
-            else {
-                let number = parseInt(clearmsg[1]);
-
-                if(isNaN(number)){
-                    message.reply("Nombre de messages à clear non ou mal défini");
-                }
-                else {
-                    message.channel.bulkDelete(number).then(messages => {
-                        console.log("Suppression de " + messages.size + " messages réussie ! ");
-                        message.reply(messages.size + " message(s) a/ont été supprimées").then(message => {
-                            message.delete({ timeout: 1000 })
-                        })
-                    }).catch(err => {
-                        console.log("Erreur lors du clear : " + err);
-                        message.reply("Erreur lors du clear" + err);
-
-                    });
-                }
-            }
-        }
-    }
 });
+
+
+
+
 
 //messages dm
 Client.on("message", message => {
@@ -325,10 +326,24 @@ Client.on("message", message => {
         }
         });
 
-        Client.on("message", message => {
-            if(message.member.roles.cache.find(r => r.name === "reuuu")) {
+   Client.on("message", message => {
         
-        
+                if(message.content.includes("https://cocorico")){
+                    message.reply("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
+                    message.delete();
+                }
+                if(message.content.includes("www.cocorico")){
+                    message.reply("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
+                    message.delete();
+                }
+                if(message.content.includes("http://cocorico")){
+                    message.reply("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
+                    message.delete();
+                }
+                if(message.content.includes("youtube.com")){
+                    message.reply("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A");
+                    message.delete();
+                }
         
                 if(message.content.includes("https://")){
                     message.reply("Vous avez utilisé un mot interdit ! :)");
@@ -356,13 +371,56 @@ Client.on("message", message => {
                     
                 }
 
+                
+
+
+            
+               
+        
+        });             
+               
+
+//warn
+Client.on("message", message => {
+    if(message.content.startsWith("/warn")){
+        if(message.member.hasPermission("BAN_MEMBERS")){
+
+            if(!message.mentions.users.first()) return;
+
+            utilisateur = message.mentions.users.first().id
+
+            if(bddwarns["warn"][utilisateur] == 3){
+                utilisateur.roles.add("689528234316136458");
 
             }
-        
-        });
+            else{
+                if(!bddwarns["warn"][utilisateur]){
+                    bddwarns["warn"][utilisateur] = 1
+                    Savebddwarns();
+                    message.channel.send(utilisateur + " a désormais " + bddwarns["warn"][utilisateur] + " warn(s)");
+                }
+                else{
+                    bddwarns["warn"][utilisateur]++
+                    Savebddwarns();
+                    message.channel.send(utilisateur + " a désormais " + bddwarns["warn"][utilisateur] + " warn(s)");
+
+                }
+
+            }
+            if(bddwarns["warn"][utilisateur] == 6){
+                utilisateur.kick();
+            }
+            if(bddwarns["warn"][utilisateur] == 10){
+                delete bddwarns["warn"][utilisateur]
+                utilisateur.ban();
+                Savebddwarns();
+            }
 
 
-        
+        }
+    }
+
+});
 
 
 
@@ -394,10 +452,15 @@ function Savebddreports() {
 
     });
 }
+function Savebddwarns() {
+    fs.writeFile("./warn.json", JSON.stringify(bddwarns, null, 4), (err) => {
+        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
+
+    });
+}
 
 
 
 
 
 
-Client.login("TOKEN");
