@@ -10,7 +10,8 @@
 -commandes du bot (ping,..)<br>
 -commande giveaway<br>
 -command report bug game/bot/player<br>
--gros mots censurés
+-gros mots censurés<br>
+-commande de warn
 
 <br><br>
 
