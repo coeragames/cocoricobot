@@ -11,12 +11,12 @@
 -commande giveaway<br>
 -command report bug game/bot/player<br>
 -gros mots censurés<br>
--commande de warn
+-commande de warn <i>pas trop optimisée</i>
 
 <br><br>
 
 <h2>Commandes futures</h2>
--commandes de modération enrichies (unban, temban, warn)<br>
+-commandes de modération enrichies (unban, temban)<br>
 -message arrivée/départ<br>
 -système d'EXP<br>
 ...
