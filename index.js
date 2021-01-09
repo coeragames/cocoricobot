@@ -3,16 +3,25 @@ const Client = new Discord.Client();
 const prefix = "/";
 const moment = require('moment');
 const fs = require("fs");
-const ms = require('ms')
+const ms = require('ms');
+const ytdl = require("ytdl-core");
 const bddbot = require("./bug-bot.json");
 const bddgame = require("./bug-game.json");
 const bddsugg = require("./sugg.json");
 const bddreports = require("./reports.json");
 const bddwarns = require("./warn.json");
+const { disconnect } = require("process");
+var list = [];
 
 
 Client.on("ready", () => {
     console.log("Bot opérationnel")
+
+    //774708723674906634
+    var Channel = Client.channels.cache.get("774708723674906634");
+    setInterval(() => {
+        Channel.send("**Vote** \n \nN'oubliez pas de voter ! \n __Vote 1:__ https://serveur-prive.net/minecraft/cocoricomc-6097 \n__Vote 2:__ https://serveur-minecraft.com/1939")
+    }, 60000);
     
 });
 
@@ -98,11 +107,15 @@ Client.on("message",  async message => {
         
         }, ms(argsg[1]));
     }
+
+
 })
            
 //commandes non-mp
 Client.on("message", message => {
     if(message.channel.type == "dm") return;
+
+
 
 
     //ping pong easter egg
@@ -135,8 +148,8 @@ Client.on("message", message => {
 
         //ping bot
     if(message.content === prefix + "ping-bot"){
-        message.channel.send("Calcul du Ping en cours...").then(message => {
-            message.edit("Ping du bot: " + Math.round(Client.ping) + "ms");
+        message.channel.send("Pong ! Calcul du Ping en cours...").then(message => {
+            message.edit("Ping du bot: " + Math.round(Math.round(Client.ws.ping)) + "ms");
 
         })
     }
@@ -145,6 +158,7 @@ Client.on("message", message => {
         if(message.content.length > 10){
             message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
             bug_game = message.content.slice(10)
+            Client.channels.cache.get("796092341467217930").send("**Bug**"  + "\n" + bug_game + `Report par ${message.author}`);
             bddgame["bug"] = bug_game
             Savebddbugsgame();
 
@@ -156,6 +170,7 @@ Client.on("message", message => {
         if(message.content.length > 11){
             message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
             bug_bot = message.content.slice(9)
+            Client.channels.cache.get("796092366309163059").send("**Bug**"  + "\n" + bug_bot + `Report par ${message.author}`);
             bddbot["bug"] = bug_bot
             Savebddbugsbot();
 
@@ -167,6 +182,7 @@ Client.on("message", message => {
         if(message.content.length > 9){
             message.channel.send("La **suggestion** a été enregistré !");
             sugg = message.content.slice(9)
+            Client.channels.cache.get("796092652315607092").send("**Suggestion**"  + "\n" + sugg + `Envoyée par ${message.author}`);
             bddsugg["suggestion"] = sugg
             Savebddsugg();
 
@@ -177,8 +193,9 @@ Client.on("message", message => {
     if(message.content.startsWith("/report")){
         if(message.content.length > 9){
             message.channel.send("La **report** a été envoyé au STAFF !");
-            sugg = message.content.slice(9)
-            bddreports["reports"] = sugg
+            report = message.content.slice(9)
+            Client.channels.cache.get("796092389457788949").send("**Bug**"  + "\n" + report + `Report par ${message.author}`);
+            bddreports["reports"] = report
             Savebddreports();
 
         }
@@ -216,6 +233,9 @@ Client.on("message", message => {
 
     if(message.content == prefix + "help"){
         message.channel.send("**Help** \n \n __Besoin d'aide ?__ \n \n /help-global - Aide Générale \n \n /help-moderation - Aide Modération \n \n /support - *Avec CocoricoSupport*");
+    }
+        if(message.content == prefix + "vote"){
+        message.channel.send("**Vote** \n \nhttps://serveur-minecraft.com/1939 \nhttps://serveur-prive.net/minecraft/cocoricomc-6097");
     }
 
     if(message.content == prefix + "help-global"){
@@ -327,58 +347,88 @@ Client.on("message", message => {
         });
 
    Client.on("message", message => {
-        
-                if(message.content.includes("https://cocorico")){
-                    message.reply("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
-                    message.delete();
-                }
-                if(message.content.includes("www.cocorico")){
-                    message.reply("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
-                    message.delete();
-                }
-                if(message.content.includes("http://cocorico")){
-                    message.reply("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
+    if(message.author.bot) return;
+    if(message.member.roles.cache.has('518500387775578115')) return;
+                
+                
+                if(message.content.includes("cocorico-mc.pr11.fr")){
+                    message.channel.send("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
                     message.delete();
                 }
                 if(message.content.includes("youtube.com")){
-                    message.reply("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A");
+                    if(message.content.includes("/play")) return;
+                    message.channel.send("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A");
                     message.delete();
                 }
         
                 if(message.content.includes("https://")){
+                if(message.content.startsWith("https://tenor.com")) return;
+                if(message.content.includes("cocorico-mc.pr11.fr")) return;
+                if(message.content.includes("youtube.com")) return;
+                if(message.content.startsWith("/play")) return;
                     message.reply("Vous avez utilisé un mot interdit ! :)");
                     message.delete();
                     
                 }
                 if(message.content.includes("merde")){
+                    if(message.content.includes("/play")) return;
                     message.reply("Vous avez utilisé un mot interdit ! :)");
                     message.delete();
                     
                 }
                 if(message.content.includes("putain")){
+                    if(message.content.startsWith("/play")) return;
                     message.reply("Vous avez utilisé un mot interdit ! :)");
                     message.delete();
                     
                 }
                 if(message.content.includes("con")){
+                    if(message.content.includes("/play")) return;
                     message.reply("Vous avez utilisé un mot interdit ! :)");
                     message.delete();
                     
                 }
                 if(message.content.includes("www")){
+                    if(message.content.includes("/play")) return;
                     message.reply("Vous avez utilisé un mot interdit ! :)");
                     message.delete();
                     
                 }
 
                 
-
+   });
 
             
+    Client.on("message", message => {
+    if(message.author.bot) return;             
+    if(message.member.roles.cache.has('698519586114633800')) return;     
+         
                
-        
-        });             
-               
+                if(message.content.includes("merde")){
+                    if(message.content.includes("/play")) return;
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("putain")){
+                    if(message.content.includes("/play")) return;
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("con")){
+                    if(message.content.includes("/play")) return;
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+                if(message.content.includes("www")){
+                    if(message.content.includes("/play")) return;
+                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.delete();
+                    
+                }
+   });
 
 //warn
 Client.on("message", message => {
@@ -422,7 +472,50 @@ Client.on("message", message => {
 
 });
 
+//musique
+Client.on("message", async message => {
+    if(message.content.startsWith(prefix + "stop")){
+        if(message.member.voice.channel){
+            message.member.voice.channel.leave();
 
+        }
+
+    }
+    if(message.content.startsWith(prefix + "play")){
+        if(message.member.voice.channel){
+            let argsmusique = message.content.split(" ");
+            
+            if(argsmusique[1] == undefined){
+                message.reply("Seul les liens Youtube sont acceptés !");
+        
+            }
+            else {
+                if(list.lenght > 0){
+                    list.push(argsmusique[1]);
+                    message.reply("Video ajoutée à la file d'attente");
+                }
+                else {
+                    list.push(argsmusique[1]);
+                    message.reply("Vidéo ajoutée à la file d'attente");
+
+                    message.member.voice.channel.join().then(connection => {
+                        playMusic(connection);
+                        
+                        connection.on("disconnect", () => {
+                            list = [];
+                        })
+
+
+                    }).catch(err => {
+                        message.reply("Erreur lors de la connection: " + err);
+                    });
+                }
+            }
+
+        }
+    }
+
+});
 
 //connection bdd.json
 function Savebddbugsgame() {
@@ -459,7 +552,31 @@ function Savebddwarns() {
     });
 }
 
+function playMusic(connection){
+    let dispatcher = connection.play(ytdl(list[0], { quality: "highestaudio"}));
 
+    dispatcher.on("finish", () => {
+        list.shift();
+        dispatcher.destroy();
+
+        if(list.lenght > 0){
+            playMusic(connection);
+        }
+        else {
+            connection.disconnect();
+        }
+    });
+
+    dispatcher.on("error", err => {
+        console.log("Erreur de dispatcher: " + err);
+        dispatcher.destroy();
+    });
+}
+
+
+
+
+Client.login("token");
 
 
 
