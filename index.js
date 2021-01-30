@@ -9,7 +9,6 @@ const bddbot = require("./bug-bot.json");
 const bddgame = require("./bug-game.json");
 const bddsugg = require("./sugg.json");
 const bddreports = require("./reports.json");
-const bddwarns = require("./warn.json");
 const { disconnect } = require("process");
 var list = [];
 
@@ -309,7 +308,7 @@ Client.on("message", message => {
                  }
             
             }
-            else if(message.content.startsWith(prefix + "unmute")){
+        else if(message.content.startsWith(prefix + "unmute")){
                 let mention = message.mentions.members.first();
 
                 if(mention == undefined){
@@ -430,47 +429,7 @@ Client.on("message", message => {
                 }
    });
 
-//warn
-Client.on("message", message => {
-    if(message.content.startsWith("/warn")){
-        if(message.member.hasPermission("BAN_MEMBERS")){
 
-            if(!message.mentions.users.first()) return;
-
-            utilisateur = message.mentions.users.first().id
-
-            if(bddwarns["warn"][utilisateur] == 3){
-                utilisateur.roles.add("689528234316136458");
-
-            }
-            else{
-                if(!bddwarns["warn"][utilisateur]){
-                    bddwarns["warn"][utilisateur] = 1
-                    Savebddwarns();
-                    message.channel.send(utilisateur + " a désormais " + bddwarns["warn"][utilisateur] + " warn(s)");
-                }
-                else{
-                    bddwarns["warn"][utilisateur]++
-                    Savebddwarns();
-                    message.channel.send(utilisateur + " a désormais " + bddwarns["warn"][utilisateur] + " warn(s)");
-
-                }
-
-            }
-            if(bddwarns["warn"][utilisateur] == 6){
-                utilisateur.kick();
-            }
-            if(bddwarns["warn"][utilisateur] == 10){
-                delete bddwarns["warn"][utilisateur]
-                utilisateur.ban();
-                Savebddwarns();
-            }
-
-
-        }
-    }
-
-});
 
 //musique
 Client.on("message", async message => {
@@ -541,12 +500,6 @@ function Savebddsugg() {
 
 function Savebddreports() {
     fs.writeFile("./reports.json", JSON.stringify(bddreports, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-function Savebddwarns() {
-    fs.writeFile("./warn.json", JSON.stringify(bddwarns, null, 4), (err) => {
         if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
 
     });
