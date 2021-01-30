@@ -11,7 +11,6 @@
 -commande giveaway<br>
 -command report bug game/bot/player<br>
 -gros mots censurés<br>
--commande de warn <i>pas trop optimisée</i>
 
 <br><br>
 
