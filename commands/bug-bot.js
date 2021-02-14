@@ -5,7 +5,7 @@ module.exports = {
         const bddbot = require("./bdd/bug-bot.json");
         const Discord = require("discord.js");
         const Client = new Discord.Client();
-        if(message.content.length > 11){
+        if(message.content.length > 9){
             message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
             bug_bot = message.content.slice(9)
             Client.channels.cache.get("796092366309163059").send("**Bug**"  + "\n" + bug_bot + `Report par ${message.author}`);
