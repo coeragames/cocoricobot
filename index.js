@@ -5,13 +5,19 @@ const moment = require('moment');
 const fs = require("fs");
 const ms = require('ms');
 const ytdl = require("ytdl-core");
-const bddbot = require("./bug-bot.json");
-const bddgame = require("./bug-game.json");
-const bddsugg = require("./sugg.json");
-const bddreports = require("./reports.json");
+const bddbot = require("./bdd/bug-bot.json");
+const bddgame = require("./bdd/bug-game.json");
+const bddsugg = require("./bdd/sugg.json");
+const bddreports = require("./bdd/reports.json");
 const { disconnect } = require("process");
 var list = [];
 
+Client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for(const file of commandFiles){
+    const command = require(`./commands/${file}`);
+    Client.commands.set(command.name, command)
+}
 
 Client.on("ready", () => {
     console.log("Bot opérationnel")
@@ -28,6 +34,16 @@ Client.on("ready", async () =>{
     Client.user.setStatus('online')
     Client.user.setActivity("Surveille CocoricoMC - /help")
 })
+
+Client.on("message", async message => {
+    if(!Client.commands.has(command)) return;
+    try{
+        Client.commands.get(command).execute(message, args);
+    }catch(error){
+        console.error(error);
+        message.reply("Une erreur est survenue lors de l'execution de la commande");
+    }
+});
 
 Client.on("message",  async message => {
 
@@ -145,63 +161,6 @@ Client.on("message", message => {
 //messages dm et serveur
 Client.on("message", message => {
 
-        //ping bot
-    if(message.content === prefix + "ping-bot"){
-        message.channel.send("Pong ! Calcul du Ping en cours...").then(message => {
-            message.edit("Ping du bot: " + Math.round(Math.round(Client.ws.ping)) + "ms");
-
-        })
-    }
-
-    if(message.content.startsWith("/bug-game")){
-        if(message.content.length > 10){
-            message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
-            bug_game = message.content.slice(10)
-            Client.channels.cache.get("796092341467217930").send("**Bug**"  + "\n" + bug_game + `Report par ${message.author}`);
-            bddgame["bug"] = bug_game
-            Savebddbugsgame();
-
-        }
-
-    }
-
-    if(message.content.startsWith("/bug-bot")){
-        if(message.content.length > 11){
-            message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
-            bug_bot = message.content.slice(9)
-            Client.channels.cache.get("796092366309163059").send("**Bug**"  + "\n" + bug_bot + `Report par ${message.author}`);
-            bddbot["bug"] = bug_bot
-            Savebddbugsbot();
-
-        }
-
-    }
-
-    if(message.content.startsWith("/suggestion")){
-        if(message.content.length > 9){
-            message.channel.send("La **suggestion** a été enregistré !");
-            sugg = message.content.slice(9)
-            Client.channels.cache.get("796092652315607092").send("**Suggestion**"  + "\n" + sugg + `Envoyée par ${message.author}`);
-            bddsugg["suggestion"] = sugg
-            Savebddsugg();
-
-        }
-
-    }
-
-    if(message.content.startsWith("/report")){
-        if(message.content.length > 9){
-            message.channel.send("La **report** a été envoyé au STAFF !");
-            report = message.content.slice(9)
-            Client.channels.cache.get("796092389457788949").send("**Bug**"  + "\n" + report + `Report par ${message.author}`);
-            bddreports["reports"] = report
-            Savebddreports();
-
-        }
-
-    }
-
-
     if(message.content == prefix + "support"){
         message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
     }
@@ -252,63 +211,8 @@ Client.on("message", message => {
 
     if(message.author.bot) return;
     if(message.channel.type == "dm") return;
-
-        if(message.member.hasPermission("BAN_MEMBERS")){
-        if(message.content.startsWith(prefix + "ban")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non-menntionné ou mal mentionné");
-            }
-            else {
-                if(mention.bannable){
-                    mention.ban();
-                    message.channel.send(mention.displayName + "a été banni de CocoricoMC");
-
-                }
-                else {
-                    message.reply("Impossible de bannir ce membre");
-                }
-            }
-        }
-        
-
-        
-        else if(message.content.startsWith(prefix + "kick")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non-mentionné ou mal mentionné");
-            }
-            else {
-                if(mention.kickable){
-                  mention.kick();  
-                  message.channel.send(mention.displayName + "a été kick avec succès");
-                  
-                }
-                else {
-                    message.reply("Impossible de kick ce membre");
-                }
-            }
-        }
-        else if(message.content.startsWith(prefix + "mute")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non-mentionné ou mal mentionné");
-            }
-            else {
-                if(mention.bannable){
-                    mention.roles.add("689528234316136458");
-                    message.reply(mention.displayName + " a été mute avec succès");
-                    }
-                    else {
-                        message.reply("Impossible de mute ce membre");
-                    }
-                 }
-            
-            }
-        else if(message.content.startsWith(prefix + "unmute")){
+    
+        if(message.content.startsWith(prefix + "unmute")){
                 let mention = message.mentions.members.first();
 
                 if(mention == undefined){
@@ -341,9 +245,9 @@ Client.on("message", message => {
                     }, args[2] *1000);
                 }
             
-            }
-        }
-        });
+     }
+     
+});
 
    Client.on("message", message => {
     if(message.author.bot) return;
@@ -478,28 +382,28 @@ Client.on("message", async message => {
 
 //connection bdd.json
 function Savebddbugsgame() {
-    fs.writeFile("./bug-game.json", JSON.stringify(bddgame, null, 4), (err) => {
+    fs.writeFile("./bdd/bug-game.json", JSON.stringify(bddgame, null, 4), (err) => {
         if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
 
     });
 }
 
 function Savebddbugsbot() {
-    fs.writeFile("./bug-bot.json", JSON.stringify(bddbot, null, 4), (err) => {
+    fs.writeFile("./bdd/bug-bot.json", JSON.stringify(bddbot, null, 4), (err) => {
         if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
 
     });
 }
 
 function Savebddsugg() {
-    fs.writeFile("./sugg.json", JSON.stringify(bddsugg, null, 4), (err) => {
+    fs.writeFile("./bdd/sugg.json", JSON.stringify(bddsugg, null, 4), (err) => {
         if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
 
     });
 }
 
 function Savebddreports() {
-    fs.writeFile("./reports.json", JSON.stringify(bddreports, null, 4), (err) => {
+    fs.writeFile("./bdd/reports.json", JSON.stringify(bddreports, null, 4), (err) => {
         if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
 
     });
