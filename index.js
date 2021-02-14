@@ -4,10 +4,6 @@ const prefix = "/";
 const moment = require('moment');
 const fs = require("fs");
 const ms = require('ms');
-const bddbot = require("./bdd/bug-bot.json");
-const bddgame = require("./bdd/bug-game.json");
-const bddsugg = require("./bdd/sugg.json");
-const bddreports = require("./bdd/reports.json");
 
 Client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -25,7 +21,6 @@ Client.on("ready", () => {
         Channel.send("**Vote** \n \nN'oubliez pas de voter ! \n __Vote 1:__ https://serveur-prive.net/minecraft/cocoricomc-6097 \n__Vote 2:__ https://serveur-minecraft.com/1939")
     }, 60000);
     
-    const args = message.content.sclice(prefix.length).trim().split(/ +/);
 });
 
 Client.on("ready", async () =>{
@@ -33,19 +28,23 @@ Client.on("ready", async () =>{
     Client.user.setActivity("Surveille CocoricoMC - /help")
 })
 
-Client.on("message", async message => {
+Client.on("message", message => {
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
     if(!Client.commands.has(command)) return;
     try{
         Client.commands.get(command).execute(message, args);
     }catch(error){
         console.error(error);
-        message.reply("Une erreur est survenue lors de l'execution de la commande");
+        message.reply("Une erreur est survenue lors de l'execution de la commande " + error);
     }
 });
 
 //messages dm et serveur
 Client.on("message", message => {
  
+  
+
     if(message.content == "ping"){
         message.channel.send("pong");
     }
@@ -189,33 +188,4 @@ Client.on("message", message => {
 });
 
 
-//connection bdd.json
-function Savebddbugsgame() {
-    fs.writeFile("./bdd/bug-game.json", JSON.stringify(bddgame, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function Savebddbugsbot() {
-    fs.writeFile("./bdd/bug-bot.json", JSON.stringify(bddbot, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function Savebddsugg() {
-    fs.writeFile("./bdd/sugg.json", JSON.stringify(bddsugg, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function Savebddreports() {
-    fs.writeFile("./bdd/reports.json", JSON.stringify(bddreports, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-Client.login("NzgxNTYxOTU4NDczNzkzNTY2.X7_cSw.4b9i2sY1evk3Re3c__6fLx0NQwg");
+Client.login("token");
