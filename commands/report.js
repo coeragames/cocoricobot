@@ -1,6 +1,6 @@
 module.exports = {
     name: 'report',
-    description: 'Report un joueur',
+    description: 'Report un joueur/membre',
     execute(message, args){
         if(message.content.length > 9){
             message.channel.send("La **report** a été envoyé au STAFF !");
