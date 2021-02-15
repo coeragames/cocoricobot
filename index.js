@@ -1,9 +1,25 @@
 const Discord = require("discord.js");
 const Client = new Discord.Client();
 const prefix = "/";
-const moment = require('moment');
 const fs = require("fs");
-const ms = require('ms');
+
+
+const config = require('./config.json');
+Client.config = config;
+
+const { GiveawaysManager } = require('discord-giveaways');
+
+Client.giveawaysManager = new GiveawaysManager(Client, {
+    storage: "./giveaways.json",
+    updateCountdownEvery: 5000,
+    default: {
+        botsCanWin: false,
+        exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR"],
+        embedColor: "#FF0000",
+        reaction: "🎉"
+    }
+});
+
 
 Client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -33,12 +49,14 @@ Client.on("message", message => {
     const command = args.shift().toLowerCase();
     if(!Client.commands.has(command)) return;
     try{
-        Client.commands.get(command).execute(message, args);
+        Client.commands.get(command).execute(message, args, Client);
     }catch(error){
         console.error(error);
         message.reply("Une erreur est survenue lors de l'execution de la commande " + error);
     }
 });
+
+
 
 //messages dm et serveur
 Client.on("message", message => {
@@ -188,4 +206,4 @@ Client.on("message", message => {
 });
 
 
-Client.login("token");
+Client.login("NzgxNTYxOTU4NDczNzkzNTY2.X7_cSw.vC0cp-dud0tMB1ojIU1zXn7QhUs");

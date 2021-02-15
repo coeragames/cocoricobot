@@ -1,7 +1,7 @@
 module.exports = {
     name: 'mute',
     description: 'Pour mute un membre',
-    execute(message, args){
+    execute(message, args, Client){
         if(message.member.hasPermission("BAN_MEMBERS")){
             if(message.channel.type == "dm") return;
     

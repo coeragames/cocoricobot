@@ -1,7 +1,7 @@
 module.exports = {
     name: 'ban',
     description: 'Pour bannir un membre',
-    execute(message, args){
+    execute(message, args, Client){
 
     if(message.member.hasPermission("BAN_MEMBERS")){
         if(message.channel.type == "dm") return;

@@ -1,7 +1,7 @@
 module.exports = {
     name: 'unmute',
     description: 'Unmuter un membre',
-    execute(message, args){
+    execute(message, args, Client){
         let mention = message.mentions.members.first();
 
         if(mention == undefined){

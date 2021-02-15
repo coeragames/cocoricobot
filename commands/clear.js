@@ -2,7 +2,7 @@
 module.exports = {
     name: 'clear',
     description: 'Pour clear un nombre défini de messages',
-    execute(message, args){
+    execute(message, args, Client){
         if(message.member.hasPermission("BAN_MEMBERS")){
             if(message.member === null) return;
         
