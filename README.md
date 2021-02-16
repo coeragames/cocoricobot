@@ -2,7 +2,7 @@
 <h1>Cocorico'Bot</h1><br>
 <i>développé par coeragames#9370</i><br><br>
 <strong>Cocorico'Bot est le bot utilisé par CocoricoMC (https://cocorico-mc.pr11.fr) pour des commandes de modération, ainsi que des commandes utiles à la vie du serveur</strong><br><br>
-<i>version 0.6, la v1 arrive bientôt</i><br><br>
+<i>version 0.4.2, la v1 arrive bientôt</i><br><br>
 <h2>Commandes à ce jour:</h2><br><br>
 -commandes de modération (kick, ban, mute, tempmute)<br>
 -commande de clear<br>
