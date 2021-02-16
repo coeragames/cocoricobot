@@ -13,5 +13,11 @@ module.exports = {
         else {
             message.channel.send("Nous avons détécté que vous ne faites aucune suggestion dans votre message");
         }
+
+        Client.on("messageReactionAdd", async (reaction, user) => {
+            
+
+        })
+
    },
 };

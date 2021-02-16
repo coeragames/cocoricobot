@@ -35,7 +35,7 @@ Client.on("ready", () => {
     var Channel = Client.channels.cache.get("774708723674906634");
     setInterval(() => {
         Channel.send("**Vote** \n \nN'oubliez pas de voter ! \n __Vote 1:__ https://serveur-prive.net/minecraft/cocoricomc-6097 \n__Vote 2:__ https://serveur-minecraft.com/1939")
-    }, 60000);
+    }, 43200000);
     
 });
 
