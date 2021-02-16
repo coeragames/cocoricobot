@@ -7,7 +7,7 @@ module.exports = {
 
         if(!args[0]) return message.channel.send("Aucun ID m'a été fourni");
 
-        let giveaway = Client.giveawaysManager.giveaways.find((g) => g.prize === args.join(" ")) || Client.giveawaysManager.giveaways.find((g) => g.messageID === args.join[0]);
+        let giveaway = Client.giveawaysManager.giveaways.find((g) => g.prize === args.join(" ")) || Client.giveawaysManager.giveaways.find((g) => g.messageID === args[0]);
 
         if(!giveaway) return message.channel.send('Je n\'ai pas pu trouvé un giveaway avec cet ID');
 

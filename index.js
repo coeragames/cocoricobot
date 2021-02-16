@@ -58,7 +58,8 @@ Client.on("message", message => {
 
 
 
-//messages dm et serveur
+
+//messages infos
 Client.on("message", message => {
  
   
