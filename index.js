@@ -128,12 +128,16 @@ Client.on("message", message => {
                 
                 
                 if(message.content.includes("cocorico-mc.pr11.fr")){
-                    message.channel.send("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
+                    message.channel.send("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                 }
                 if(message.content.includes("youtube.com")){
                     if(message.content.includes("/play")) return;
-                    message.channel.send("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A");
+                    message.channel.send("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                 }
         
@@ -142,31 +146,41 @@ Client.on("message", message => {
                 if(message.content.includes("cocorico-mc.pr11.fr")) return;
                 if(message.content.includes("youtube.com")) return;
                 if(message.content.startsWith("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("merde")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("putain")){
                     if(message.content.startsWith("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("con")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("www")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
@@ -182,25 +196,33 @@ Client.on("message", message => {
                
                 if(message.content.includes("merde")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("putain")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("con")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
                 if(message.content.includes("www")){
                     if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
+                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
+                        message.delete({ timeout: 1000 })
+                    })
                     message.delete();
                     
                 }
