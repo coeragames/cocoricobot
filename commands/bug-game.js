@@ -15,19 +15,7 @@ module.exports = {
             message.channel.send("Nous avons détecté que vous ne signalez aucun membre/joueur dans votre message");
         }
 
-        Client.on("messageReactionAdd", async (reaction, user) => {
-            if(message.member.roles.cache.has('695616583917109320')) return;   
-            if (message.member.hasPermission("BAN_MEMBERS")) {
-                if (reaction.emoji.name === '❌'){
-                    message.delete()
-                }
-                if (reaction.emoji.name === '✔️'){
-                    message.delete();
-                    if(message.member.roles.cache.has('695616583917109320')) return;   
-                    Client.channels.cache.get("695594909146546237").send("@Développeur Un Bug a été confirmé par l'équipe ! \n" + bug_game);
-                }
-            }
-        })
+
 
     },
 };

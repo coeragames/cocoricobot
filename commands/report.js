@@ -15,20 +15,5 @@ module.exports = {
             message.channel.send("Nous avons détecté que vous ne signalez aucun membre/joueur dans votre message");
         }
 
-        Client.on("messageReactionAdd", async (reaction, user) => {
-            if(message.member.roles.cache.has('695616583917109320')) return;     
-            if (message.member.hasPermission("BAN_MEMBERS")) {
-                if (reaction.emoji.name === '✔️'){
-                    message.delete();
-                    if(message.member.roles.cache.has('695616583917109320')) return;   
-                    Client.channels.cache.get("695666093381124157").send("Je te laisse prendre la bonne décision contre le joueur reporté! \n \n Rappel: \n" + report);
-                }
-                if (reaction.emoji.name === '❌'){
-                    message.delete();
-                    if(message.member.roles.cache.has('695616583917109320')) return;   
-                    Client.channels.cache.get("695666093381124157").send("Je te laisse prendre la bonne décision contre la reporteur! \n \n Rappel: \n" + report);
-                }
-            }
-        })
     },
 };

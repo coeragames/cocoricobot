@@ -2,6 +2,11 @@ const Discord = require("discord.js");
 const Client = new Discord.Client();
 const prefix = "/";
 const fs = require("fs");
+const { badwords } = require("./commands/bdd/bad-words.json")
+
+
+Client.warn = require('./commands/bdd/warns.json')
+
 
 
 const config = require('./config.json');
@@ -56,17 +61,23 @@ Client.on("message", message => {
     }
 });
 
+Client.on('guildMemberAdd', member => {
+    member.guild.channels.cache.get('774708723674906634').send(`**Bienvenue à ${member} !** \n\n Va faire un tour dans #😀pour-les-nouveaux😀 pour avoir toutes les infos sur le serveur ! \n\n *Nous sommes désormais ${member.guild.memberCount} !`)
+    member.roles.add("660799670095708163")
+    member.roles.add("697058841711607809")
+})
+
+Client.on('guildMemberRemove', member => {
+    member.guild.channels.cache.get('774708723674906634').send(`${member.user.tag} a quitté le serveur`)
+})
+
 
 
 
 //messages infos
 Client.on("message", message => {
- 
-  
 
-    if(message.content == "ping"){
-        message.channel.send("pong");
-    }
+
      
     if(message.content == prefix + "id"){
         message.channel.send("**" + message.author.username + "** a comme ID Discord __" + message.author.id + "__" );
@@ -120,112 +131,70 @@ Client.on("message", message => {
      }
 
 });
+
+function is_url(str) {
+    let regexp = /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+    if(regexp.test(str)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Client.on('messageUpdate', message => {
+    if(message.author.bot) return;
+    if(message.member.hasPermission("BAN_MEMBERS")) return;
+
+        if(is_url(message.content) === true) {
+            if(message.content.includes("pr11.fr", "discord.gg/f64qtkP", "tenor.com", "youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A")) return;
+            message.delete()
+            return message.channel.send("Vous avez utilisé un lien, et c'est interdit").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
+
+        let confirm = false;
+
+        var i;
+        for(i = 0; i < badwords.length; i++) {
+            if(message.content.toLowerCase().includes(badwords[i].toLowerCase()))
+            confirm = true
+        }
+        if(confirm) {
+            message.delete()
+            return message.channel.send("Mot Interdit utilisé").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
+})
  
 //mots interdits
 Client.on("message", message => {
     if(message.author.bot) return;
-    if(message.member.roles.cache.has('518500387775578115')) return;
-                
-                
-                if(message.content.includes("cocorico-mc.pr11.fr")){
-                    message.channel.send("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                }
-                if(message.content.includes("youtube.com")){
-                    if(message.content.includes("/play")) return;
-                    message.channel.send("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                }
-        
-                if(message.content.includes("https://")){
-                if(message.content.startsWith("https://tenor.com")) return;
-                if(message.content.includes("cocorico-mc.pr11.fr")) return;
-                if(message.content.includes("youtube.com")) return;
-                if(message.content.startsWith("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("merde")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("putain")){
-                    if(message.content.startsWith("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("con")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("www")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
+    if(message.member.hasPermission("BAN_MEMBERS")) return;
 
-                
-});
+        if(is_url(message.content) === true) {
+            if(message.content.includes("pr11.fr", "discord.gg/f64qtkP", "tenor.com", "youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A")) return;
+            message.delete()
+            return message.channel.send("Vous avez utilisé un lien, et c'est interdit").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
 
-            
-Client.on("message", message => {
-    if(message.author.bot) return;             
-    if(message.member.roles.cache.has('698519586114633800')) return;     
-         
-               
-                if(message.content.includes("merde")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("putain")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("con")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
-                if(message.content.includes("www")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)").then(message => {
-                        message.delete({ timeout: 1000 })
-                    })
-                    message.delete();
-                    
-                }
+        let confirm = false;
+
+        var i;
+        for(i = 0; i < badwords.length; i++) {
+            if(message.content.toLowerCase().includes(badwords[i].toLowerCase()))
+            confirm = true
+        }
+        if(confirm) {
+            message.delete()
+            return message.channel.send("Mot Interdit utilisé").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
+
 });
 
 

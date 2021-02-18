@@ -1,4 +1,3 @@
-
 module.exports = {
     name: 'bug-bot',
     description: 'Pour signaler un bug sur le Bot',
@@ -14,21 +13,5 @@ module.exports = {
         else {
             message.channel.send("Nous avons détectés que vous signalez aucun bug dans votre message");
         }
-
-        Client.on("messageReactionAdd", async (reaction, user) => {
-            if(message.member.roles.cache.has('695616583917109320')) return;   
-            if (message.member.hasPermission("BAN_MEMBERS")) {
-                if (reaction.emoji.name === '❌'){
-                    message.delete();
-                    if(message.member.roles.cache.has('695616583917109320')) return;   
-                }
-                if (reaction.emoji.name === '✔️'){
-                    message.delete();
-                    if(message.member.roles.cache.has('695616583917109320')) return;   
-                    Client.channels.cache.get("811555693449445418").send("@Développeur Un Bug a été confirmé par l'équipe ! \n" + bug_bot);
-                }
-                
-            }
-        })
     },
 };
