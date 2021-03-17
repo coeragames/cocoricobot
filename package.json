@@ -4,9 +4,11 @@
   "description": "bot",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.4.1",
+    "discord-giveaways": "^4.4.3",
+    "discord.js": "^12.5.1",
     "fs": "0.0.1-security",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "ms": "^2.1.3"
   },
   "devDependencies": {},
   "scripts": {

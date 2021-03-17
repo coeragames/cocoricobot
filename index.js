@@ -1,17 +1,37 @@
 const Discord = require("discord.js");
 const Client = new Discord.Client();
 const prefix = "/";
-const moment = require('moment');
 const fs = require("fs");
-const ms = require('ms');
-const ytdl = require("ytdl-core");
-const bddbot = require("./bug-bot.json");
-const bddgame = require("./bug-game.json");
-const bddsugg = require("./sugg.json");
-const bddreports = require("./reports.json");
-const { disconnect } = require("process");
-var list = [];
+const { badwords } = require("./commands/bdd/bad-words.json")
 
+
+Client.warn = require('./commands/bdd/warns.json')
+
+
+
+const config = require('./config.json');
+Client.config = config;
+
+const { GiveawaysManager } = require('discord-giveaways');
+
+Client.giveawaysManager = new GiveawaysManager(Client, {
+    storage: "./giveaways.json",
+    updateCountdownEvery: 5000,
+    default: {
+        botsCanWin: false,
+        exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR"],
+        embedColor: "#FF0000",
+        reaction: "🎉"
+    }
+});
+
+
+Client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for(const file of commandFiles){
+    const command = require(`./commands/${file}`);
+    Client.commands.set(command.name, command)
+}
 
 Client.on("ready", () => {
     console.log("Bot opérationnel")
@@ -20,7 +40,7 @@ Client.on("ready", () => {
     var Channel = Client.channels.cache.get("774708723674906634");
     setInterval(() => {
         Channel.send("**Vote** \n \nN'oubliez pas de voter ! \n __Vote 1:__ https://serveur-prive.net/minecraft/cocoricomc-6097 \n__Vote 2:__ https://serveur-minecraft.com/1939")
-    }, 60000);
+    }, 43200000);
     
 });
 
@@ -29,178 +49,43 @@ Client.on("ready", async () =>{
     Client.user.setActivity("Surveille CocoricoMC - /help")
 })
 
-Client.on("message",  async message => {
-
-    if(message.member.hasPermission("BAN_MEMBERS")){
-        if(message.member === null) return;
-        if(message.content.startsWith(prefix + "clear")){
-            let clearmsg = message.content.split(" ");
-            if(message.channel.type == "dm") return;       
-            if(clearmsg[1] == undefined){
-                message.reply("Nombre de messages à clear non ou mal défini");
-            }
-            else {
-                let number = parseInt(clearmsg[1]);
-
-                if(isNaN(number)){
-                    message.reply("Nombre de messages à clear non ou mal défini");
-                }
-                else {
-                    message.channel.bulkDelete(number).then(messages => {
-                        console.log("Suppression de " + messages.size + " messages réussie ! ");
-                        message.reply(messages.size + " message(s) a/ont été supprimées").then(message => {
-                            message.delete({ timeout: 1000 })
-                        })
-                    }).catch(err => {
-                        console.log("Erreur lors du clear : " + err);
-                        message.reply("Erreur lors du clear" + err);
-
-                    });
-                }
-            }
-        }
+Client.on("message", message => {
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
+    if(!Client.commands.has(command)) return;
+    try{
+        Client.commands.get(command).execute(message, args, Client);
+    }catch(error){
+        console.error(error);
+        message.reply("Une erreur est survenue lors de l'execution de la commande " + error);
     }
 });
-//giveaway
 
-Client.on("message",  async message => {
-    let argsg = message.content.substring(prefix.length).split(" ")
-
-    if (message.content.startsWith(prefix + "giveaway")) {
-        let time = argsg[1]
-        if (!time) return message.channel.send("Vous n'avez pas spécifié la durée du giveaway");
-        
-        if (
-            !argsg[1].endsWith("d") &&
-            !argsg[1].endsWith("h") &&
-            !argsg[1].endsWith("m") &&
-            !argsg[1].endsWith("s") 
-
-        )
-        return message.channel.send("Temps mal spécifié")
-
-        let gchannel = message.mentions.channels.first();
-        if (!gchannel) return message.channel.send("Je ne peux pas trouver ce salon dans ce serveur")
-
-        let prize = argsg.slice(3).join("")
-        if (!prize) return message.channel.send("Prix du giveaway non spécifié")
-
-        message.delete()
-        gchannel.send(":tada: **NOUVEAU GIVEAWAY** :tada:")
-        let gembed = new Discord.MessageEmbed()
-            .setTitle("Nouveau Giveway !")
-            .setColor("RANDOM")
-            .setDescription(`Réagissez avec :tada: pour participer \nCrée par: **${message.author}**\nDurée: **${time}**\nPrix: **${prize}**`)
-            .setTimestamp(Date.now + ms(argsg[1]))
-            let m = await gchannel.send(gembed)
-            m.react("🎉")
-            setTimeout(() => {
-                if (m.reactions.cache.get("🎉").count <= 1) {
-                    return message.channel.send("Pas assez de participants")
-                }
-                let winner = m.reactions.cache.get("🎉").users.cache.filter((u) => !u.bot).random();
-                gchannel.send(`Bravo à ${winner}! Tu as gagné **${prize}**`
-                );
-             
-            
-        
-        }, ms(argsg[1]));
-    }
-
-
+Client.on('guildMemberAdd', member => {
+    member.guild.channels.cache.get('774708723674906634').send(`**Bienvenue à ${member} !** \n\n Va faire un tour dans #😀pour-les-nouveaux😀 pour avoir toutes les infos sur le serveur ! \n\n *Nous sommes désormais ${member.guild.memberCount} !`)
+    member.roles.add("660799670095708163")
+    member.roles.add("697058841711607809")
 })
-           
-//commandes non-mp
+
+Client.on('guildMemberRemove', member => {
+    member.guild.channels.cache.get('774708723674906634').send(`${member.user.tag} a quitté le serveur`)
+})
+
+
+
+
+//messages infos
 Client.on("message", message => {
-    if(message.channel.type == "dm") return;
 
 
-
-
-    //ping pong easter egg
-    if(message.content == "ping"){
-        message.channel.send("pong");
-    }
- 
-    //commande id
+     
     if(message.content == prefix + "id"){
         message.channel.send("**" + message.author.username + "** a comme ID Discord __" + message.author.id + "__" );
-
     }
-
-});
-
-
-
-
-
-//messages dm
-Client.on("message", message => {
 
     if(message.content == prefix + "discord"){
         message.channel.send("Rejoignez le Discord de **CocoricoMC** avec ce lien: https://bit.ly/Cocorico-discord");
     }
-});
-
-//messages dm et serveur
-Client.on("message", message => {
-
-        //ping bot
-    if(message.content === prefix + "ping-bot"){
-        message.channel.send("Pong ! Calcul du Ping en cours...").then(message => {
-            message.edit("Ping du bot: " + Math.round(Math.round(Client.ws.ping)) + "ms");
-
-        })
-    }
-
-    if(message.content.startsWith("/bug-game")){
-        if(message.content.length > 10){
-            message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
-            bug_game = message.content.slice(10)
-            Client.channels.cache.get("796092341467217930").send("**Bug**"  + "\n" + bug_game + `Report par ${message.author}`);
-            bddgame["bug"] = bug_game
-            Savebddbugsgame();
-
-        }
-
-    }
-
-    if(message.content.startsWith("/bug-bot")){
-        if(message.content.length > 11){
-            message.channel.send("Le **bug** a été enregistré ! \n Nous allons essaier de le régler le plus rapidement possible");
-            bug_bot = message.content.slice(9)
-            Client.channels.cache.get("796092366309163059").send("**Bug**"  + "\n" + bug_bot + `Report par ${message.author}`);
-            bddbot["bug"] = bug_bot
-            Savebddbugsbot();
-
-        }
-
-    }
-
-    if(message.content.startsWith("/suggestion")){
-        if(message.content.length > 9){
-            message.channel.send("La **suggestion** a été enregistré !");
-            sugg = message.content.slice(9)
-            Client.channels.cache.get("796092652315607092").send("**Suggestion**"  + "\n" + sugg + `Envoyée par ${message.author}`);
-            bddsugg["suggestion"] = sugg
-            Savebddsugg();
-
-        }
-
-    }
-
-    if(message.content.startsWith("/report")){
-        if(message.content.length > 9){
-            message.channel.send("La **report** a été envoyé au STAFF !");
-            report = message.content.slice(9)
-            Client.channels.cache.get("796092389457788949").send("**Bug**"  + "\n" + report + `Report par ${message.author}`);
-            bddreports["reports"] = report
-            Savebddreports();
-
-        }
-
-    }
-
 
     if(message.content == prefix + "support"){
         message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
@@ -246,291 +131,71 @@ Client.on("message", message => {
      }
 
 });
+
+function is_url(str) {
+    let regexp = /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+    if(regexp.test(str)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Client.on('messageUpdate', message => {
+    if(message.author.bot) return;
+    if(message.member.hasPermission("BAN_MEMBERS")) return;
+
+        if(is_url(message.content) === true) {
+            if(message.content.includes("pr11.fr", "discord.gg/f64qtkP", "tenor.com", "youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A")) return;
+            message.delete()
+            return message.channel.send("Vous avez utilisé un lien, et c'est interdit").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
+
+        let confirm = false;
+
+        var i;
+        for(i = 0; i < badwords.length; i++) {
+            if(message.content.toLowerCase().includes(badwords[i].toLowerCase()))
+            confirm = true
+        }
+        if(confirm) {
+            message.delete()
+            return message.channel.send("Mot Interdit utilisé").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
+})
  
-//commandes kick ban mute
+//mots interdits
 Client.on("message", message => {
-
     if(message.author.bot) return;
-    if(message.channel.type == "dm") return;
+    if(message.member.hasPermission("BAN_MEMBERS")) return;
 
-        if(message.member.hasPermission("BAN_MEMBERS")){
-        if(message.content.startsWith(prefix + "ban")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non-menntionné ou mal mentionné");
-            }
-            else {
-                if(mention.bannable){
-                    mention.ban();
-                    message.channel.send(mention.displayName + "a été banni de CocoricoMC");
-
-                }
-                else {
-                    message.reply("Impossible de bannir ce membre");
-                }
-            }
-        }
-        
-
-        
-        else if(message.content.startsWith(prefix + "kick")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non-mentionné ou mal mentionné");
-            }
-            else {
-                if(mention.kickable){
-                  mention.kick();  
-                  message.channel.send(mention.displayName + "a été kick avec succès");
-                  
-                }
-                else {
-                    message.reply("Impossible de kick ce membre");
-                }
-            }
-        }
-        else if(message.content.startsWith(prefix + "mute")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non-mentionné ou mal mentionné");
-            }
-            else {
-                if(mention.bannable){
-                    mention.roles.add("689528234316136458");
-                    message.reply(mention.displayName + " a été mute avec succès");
-                    }
-                    else {
-                        message.reply("Impossible de mute ce membre");
-                    }
-                 }
-            
-            }
-        else if(message.content.startsWith(prefix + "unmute")){
-                let mention = message.mentions.members.first();
-
-                if(mention == undefined){
-                    message.reply("Membre non-mentionné ou mal mentionné");
-            }
-            else {
-                if(mention.bannable){
-                    mention.roles.remove("689528234316136458");
-                    message.reply(mention.displayName + " a été unmute avec succès");
-                    }
-                    else {
-                        message.channel.send("Impossible de unmute ce membre");
-                    }
-                }
-            }
-            else if(message.content.startsWith(prefix + "tempmute")){
-                let mention = message.mentions.members.first();
-
-                if(mention == undefined){
-                    message.reply("Membre non-mentionné ou mal mentionné");
-                }
-                else {
-                    let args = message.content.split(" ");
-
-                    mention.roles.add("689528234316136458");
-                    message.channel.send(mention.displayName + "a été tempmute avec succès")
-                    setTimeout(function() {
-                        mention.roles.remove("689528234316136458");
-                        message.channel.send("<@" + mention.id + "> . Tu as été unmute");
-                    }, args[2] *1000);
-                }
-            
-            }
-        }
-        });
-
-   Client.on("message", message => {
-    if(message.author.bot) return;
-    if(message.member.roles.cache.has('518500387775578115')) return;
-                
-                
-                if(message.content.includes("cocorico-mc.pr11.fr")){
-                    message.channel.send("Site WEB: https://cocorico-mc.pr11.fr \n Page de téléchargement du Launcher: https://cocorico-mc.pr11.fr/cocojouer.html");
-                    message.delete();
-                }
-                if(message.content.includes("youtube.com")){
-                    if(message.content.includes("/play")) return;
-                    message.channel.send("Youtube: https://www.youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A");
-                    message.delete();
-                }
-        
-                if(message.content.includes("https://")){
-                if(message.content.startsWith("https://tenor.com")) return;
-                if(message.content.includes("cocorico-mc.pr11.fr")) return;
-                if(message.content.includes("youtube.com")) return;
-                if(message.content.startsWith("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("merde")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("putain")){
-                    if(message.content.startsWith("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("con")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("www")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-
-                
-   });
-
-            
-    Client.on("message", message => {
-    if(message.author.bot) return;             
-    if(message.member.roles.cache.has('698519586114633800')) return;     
-         
-               
-                if(message.content.includes("merde")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("putain")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("con")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-                if(message.content.includes("www")){
-                    if(message.content.includes("/play")) return;
-                    message.reply("Vous avez utilisé un mot interdit ! :)");
-                    message.delete();
-                    
-                }
-   });
-
-
-
-//musique
-Client.on("message", async message => {
-    if(message.content.startsWith(prefix + "stop")){
-        if(message.member.voice.channel){
-            message.member.voice.channel.leave();
-
+        if(is_url(message.content) === true) {
+            if(message.content.includes("pr11.fr", "discord.gg/f64qtkP", "tenor.com", "youtube.com/channel/UCzr5EG-YC7GDmtnvPfo_21A")) return;
+            message.delete()
+            return message.channel.send("Vous avez utilisé un lien, et c'est interdit").then(message => {
+                message.delete({ timeout: 1000 })
+            })
         }
 
-    }
-    if(message.content.startsWith(prefix + "play")){
-        if(message.member.voice.channel){
-            let argsmusique = message.content.split(" ");
-            
-            if(argsmusique[1] == undefined){
-                message.reply("Seul les liens Youtube sont acceptés !");
-        
-            }
-            else {
-                if(list.lenght > 0){
-                    list.push(argsmusique[1]);
-                    message.reply("Video ajoutée à la file d'attente");
-                }
-                else {
-                    list.push(argsmusique[1]);
-                    message.reply("Vidéo ajoutée à la file d'attente");
+        let confirm = false;
 
-                    message.member.voice.channel.join().then(connection => {
-                        playMusic(connection);
-                        
-                        connection.on("disconnect", () => {
-                            list = [];
-                        })
-
-
-                    }).catch(err => {
-                        message.reply("Erreur lors de la connection: " + err);
-                    });
-                }
-            }
-
+        var i;
+        for(i = 0; i < badwords.length; i++) {
+            if(message.content.toLowerCase().includes(badwords[i].toLowerCase()))
+            confirm = true
         }
-    }
+        if(confirm) {
+            message.delete()
+            return message.channel.send("Mot Interdit utilisé").then(message => {
+                message.delete({ timeout: 1000 })
+            })
+        }
 
 });
 
-//connection bdd.json
-function Savebddbugsgame() {
-    fs.writeFile("./bug-game.json", JSON.stringify(bddgame, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function Savebddbugsbot() {
-    fs.writeFile("./bug-bot.json", JSON.stringify(bddbot, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function Savebddsugg() {
-    fs.writeFile("./sugg.json", JSON.stringify(bddsugg, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function Savebddreports() {
-    fs.writeFile("./reports.json", JSON.stringify(bddreports, null, 4), (err) => {
-        if (err) message.channel.send("Une erreur est survenue lors de la connection à la database");
-
-    });
-}
-
-function playMusic(connection){
-    let dispatcher = connection.play(ytdl(list[0], { quality: "highestaudio"}));
-
-    dispatcher.on("finish", () => {
-        list.shift();
-        dispatcher.destroy();
-
-        if(list.lenght > 0){
-            playMusic(connection);
-        }
-        else {
-            connection.disconnect();
-        }
-    });
-
-    dispatcher.on("error", err => {
-        console.log("Erreur de dispatcher: " + err);
-        dispatcher.destroy();
-    });
-}
-
-
-
 
 Client.login("token");
-
-
-
-
