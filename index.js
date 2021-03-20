@@ -88,11 +88,7 @@ Client.on("message", message => {
     }
 
     if(message.content == prefix + "support"){
-        message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
-    }
-
-    if(message.content == prefix + "aide"){
-        message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr \n __Chat:__ https://cocorico-mc.pr11.fr \n __Discord:__ @CocoricoSupport#0166");
+        message.channel.send("**Support** \n \n Pour contacter le Support, vous pouvez: \n __Email:__ official@pr11.fr  \n __Discord:__ @CocoricoSupport#0166");
     }
 
     if(message.content == prefix + "bug"){
@@ -112,23 +108,19 @@ Client.on("message", message => {
     }
 
     if(message.content == prefix + "version"){
-        message.channel.send("**Informations Bot** \n \n developpé par __coeragames#9370__ \n \n **Version** 0.1.1 \n \n **https://cocorico-mc.pr11.fr** \n \n - /help");
+        message.channel.send("**Informations Bot** \n \n developpé par __coeragames#9370__ \n \n **Version** BETA-1.0.1 \n \n **https://cocorico-mc.pr11.fr** \n \n - /help");
     }
 
-    if(message.content == prefix + "help"){
-        message.channel.send("**Help** \n \n __Besoin d'aide ?__ \n \n /help-global - Aide Générale \n \n /help-moderation - Aide Modération \n \n /support - *Avec CocoricoSupport*");
-    }
-        if(message.content == prefix + "vote"){
+    if(message.content == prefix + "vote"){
         message.channel.send("**Vote** \n \nhttps://serveur-minecraft.com/1939 \nhttps://serveur-prive.net/minecraft/cocoricomc-6097");
     }
+
+
 
     if(message.content == prefix + "help-global"){
         message.channel.send("**Help** \n \n /id - Donne votre ID Discord \n /ping-bot - Donne le Ping du Bot \n /discord - Donne le lien du Discord *uniquement en MP* \n /web - Donne le lien du site WEB \n /invite - Donne l'invitation officielle du Discord \n /jouer - Donne le lien de la page de téléchargement officielle du Launcher \n /version - Donne les informations sur le Bot \n /bug-game <bug> - Envoyez nous les bugs dans le jeu que vous avez repérés \n /bug-bot <bug> - Envoyez nous les bugs du bot que vous avez repérés \n /report <ping ou id de la personne que vous report> <raison (introduire liens des messages,..)> - Report un joueur  \n \n https://cocorico-mc.pr11/.fr ");
      }
 
-     if(message.content == prefix + "help-moderation"){
-        message.channel.send("**Help** \n \n /ban <membre> - Ban le membre mentionné \n /kick <membre> - Kick le membre mentionné \n \n /mute <membre> - Mute le membre mentionné \n /tempmute <membre> <secondes> - Tempmute le joueur mentionné \n \n https://cocorico-mc.pr11.fr ");
-     }
 
 });
 
